@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ATM Transaction Verification using Turing Machine</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <div>
+            <h1>ATM × Turing Machine</h1>
+            <p>
+                ATM Transaction Verification using Turing Machine
+            </p>
+        </div>
+
+        <div class="status">
+            ● SIMULATOR ONLINE
+        </div>
+    </header>
+
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+
+        <!-- LEFT SIDE -->
+        <div class="left">
+
+
+            <!-- ATM INPUT -->
+            <div class="card">
+
+                <h2>ATM Transaction</h2>
+
+                <label>Card Status</label>
+
+                <select id="card">
+                    <option value="VALID">Valid Card</option>
+                    <option value="INVALID">Invalid Card</option>
+                </select>
+
+
+                <label>PIN</label>
+
+                <input
+                    type="password"
+                    id="pin"
+                    maxlength="4"
+                    placeholder="Enter PIN"
+                >
+
+
+                <label>Transaction</label>
+
+                <select id="transaction">
+
+                    <option value="WITHDRAW">
+                        Withdraw Cash
+                    </option>
+
+                    <option value="BALANCE">
+                        Balance Inquiry
+                    </option>
+
+                </select>
+
+
+                <label>Withdrawal Amount</label>
+
+                <input
+                    type="number"
+                    id="amount"
+                    value="500"
+                >
+
+
+                <label>Account Balance</label>
+
+                <input
+                    type="number"
+                    id="balance"
+                    value="5000"
+                >
+
+
+                <div class="buttons">
+
+                    <button
+                        class="primary"
+                        onclick="initializeMachine()"
+                    >
+                        Initialize
+                    </button>
+
+                    <button
+                        onclick="resetMachine()"
+                    >
+                        Reset
+                    </button>
+
+                </div>
+
+                <p class="hint">
+                    Demo PIN: <b>1234</b>
+                </p>
+
+            </div>
+
+
+            <!-- CONTROLS -->
+            <div class="card">
+
+                <h2>Machine Controls</h2>
+
+                <div class="buttons">
+
+                    <button
+                        class="primary"
+                        onclick="runMachine()"
+                    >
+                        ▶ Run
+                    </button>
+
+                    <button
+                        onclick="stepMachine()"
+                    >
+                        Step →
+                    </button>
+
+                    <button
+                        onclick="pauseMachine()"
+                    >
+                        ⏸ Pause
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- MACHINE INFORMATION -->
+            <div class="card">
+
+                <h2>Machine Information</h2>
+
+                <div class="info-row">
+
+                    <span>Current State</span>
+                    <b id="currentState">q0</b>
+
+                </div>
+
+                <div class="info-row">
+
+                    <span>Head Position</span>
+                    <b id="headPosition">0</b>
+
+                </div>
+
+                <div class="info-row">
+
+                    <span>Steps</span>
+                    <b id="steps">0</b>
+
+                </div>
+
+                <div class="info-row">
+
+                    <span>Status</span>
+                    <b id="machineStatus">IDLE</b>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="right">
+
+
+            <!-- TAPE -->
+            <div class="card">
+
+                <div class="title-row">
+
+                    <div>
+                        <small>TURING MACHINE TAPE</small>
+                        <h2>Current Tape</h2>
+                    </div>
+
+                    <span id="headLabel">
+                        HEAD: 0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="tape"
+                    class="tape"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- CURRENT TRANSITION -->
+            <div class="card">
+
+                <small>CURRENT TRANSITION</small>
+
+                <div
+                    id="transition"
+                    class="transition"
+                >
+                    Waiting for machine...
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+            <div
+                id="result"
+                class="result"
+            >
+            </div>
+
+
+            <!-- EXECUTION TRACE -->
+            <div class="card">
+
+                <h2>Execution Trace</h2>
+
+                <div
+                    id="trace"
+                    class="trace"
+                >
+
+                    <p class="empty">
+                        No transitions executed yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- TRANSITION TABLE -->
+            <div class="card">
+
+                <h2>Transition Table</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>State</th>
+                            <th>Read</th>
+                            <th>Write</th>
+                            <th>Move</th>
+                            <th>Next State</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="transitionTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATE DIAGRAM -->
+    <div class="card diagram-card">
+
+        <h2>Turing Machine State Flow</h2>
+
+        <div class="diagram">
+
+            <div class="state">
+                q0
+                <span>START</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="state">
+                q1
+                <span>CARD VALIDATION</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="state">
+                q2
+                <span>PIN AUTHENTICATION</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="state">
+                q3
+                <span>TRANSACTION</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="state">
+                q4
+                <span>BALANCE CHECK</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="state">
+                q5
+                <span>CASH DISPENSING</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="state">
+                q6
+                <span>ACCOUNT UPDATE</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="state">
+                q7
+                <span>RECEIPT</span>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="accept">
+                q_accept
+                <span>ACCEPT</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+        PCCO301 · Theory of Computation · T.Y Computer Engineering
+    </footer>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
